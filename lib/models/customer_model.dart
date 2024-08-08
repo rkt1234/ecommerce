@@ -19,4 +19,14 @@ class CustomerModel {
       'address': address
     };
     return userObject;
-  }}
+  }
+  
+  Map<String, String> toJsonLogin() {
+    print("hello hre");
+    Map<String, String> userObject = {
+      'password': password,
+      'email': email,
+    };
+    return userObject;
+  }
+  }

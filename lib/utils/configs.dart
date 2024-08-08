@@ -1,4 +1,4 @@
 late int customerId;
 late String customerName;
-late String addresss;
-late String email;
+late String customerAddress;
+late String customerEmail;

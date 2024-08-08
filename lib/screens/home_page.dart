@@ -1,15 +1,40 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecommerce/screens/signin.dart';
+import 'package:ecommerce/services/navigation_service.dart';
+import 'package:ecommerce/utils/configs.dart';
 import 'package:ecommerce/widgets/product_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final token;
+  const HomeScreen({super.key, this.token});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late SharedPreferences pref;
+  @override
+  void initState() {
+    super.initState();
+    initSharedPreferences();
+    Map<String, dynamic> jwtDecoded = JwtDecoder.decode(
+      widget.token,
+    );
+    print(widget.token);
+    print(jwtDecoded);
+    customerName = jwtDecoded['customerName'];
+    customerId = jwtDecoded['sub'];
+    customerAddress = jwtDecoded['address'];
+    customerEmail = jwtDecoded['email'];
+  }
+
+  void initSharedPreferences() async {
+    pref = await SharedPreferences.getInstance();
+  }
   bool isselected = false;
   List<String> cat = ["All", "Clothes", "Mobile", "Laptop"];
   String selectedCategory = "All";
@@ -17,6 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () async {
+                        await pref.remove('jwt_token');
+                        pushReplacement(context, const SigninScreen());
+                      }, icon: const Icon(Icons.logout))
+        ],
         title: const Text("Shopnow"),
         backgroundColor: Colors.orangeAccent,
       ),
@@ -118,9 +149,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     shrinkWrap: true,
                     itemCount: 190,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        child: const ProductTile(),
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        child: ProductTile(),
                       );
                     },
                    ),
