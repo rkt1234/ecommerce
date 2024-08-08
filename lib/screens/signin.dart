@@ -45,34 +45,36 @@ class _SigninScreenState extends State<SigninScreen> {
           title: const Text('Sign in'),
         ),
         body: Flexible(
-          child: Container(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      errorText: provider.emailError,
-                      labelText: 'Email',
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                   TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      errorText: provider.passwordError,
-                      labelText: 'Password',
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () async {
-                       bool navigate = await provider.checkValidity(
+          child: Stack(
+            children: [
+              Container(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          errorText: provider.emailError,
+                          labelText: 'Email',
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          errorText: provider.passwordError,
+                          labelText: 'Password',
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      ElevatedButton(
+                        onPressed: () async {
+                          bool navigate = await provider.checkValidity(
                               _emailController.text, _passwordController.text);
                           print(provider.toastMessage);
                           getToast(
@@ -87,26 +89,29 @@ class _SigninScreenState extends State<SigninScreen> {
                                   // token: jwt,
                                 ));
                           }
-                      // Implement your sign up logic here
-                    },
-                    child: const Text('Sign in'),
-                  ),
-                  const SizedBox(height: 20.0),
-                  GestureDetector(
-                    onTap: () {
-                      pushReplacement(context, SignupScreen());
-                    },
-                    child: const Text(
-                      'New user? Signup',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
+                          // Implement your sign up logic here
+                        },
+                        child: const Text('Sign in'),
                       ),
-                    ),
-                  ),
-                ],
-              )),
+                      const SizedBox(height: 20.0),
+                      GestureDetector(
+                        onTap: () {
+                          pushReplacement(context, SignupScreen());
+                        },
+                        child: const Text(
+                          'New user? Signup',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
+                  provider.isLoading?Center(child: CircularProgressIndicator(),):Container()
+            ],
+          )
         )
         );
       }

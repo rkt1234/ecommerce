@@ -53,90 +53,100 @@ class _SignupScreenState extends State<SignupScreen> {
               title: const Text('Sign Up'),
             ),
             body: Flexible(
-              child: Container(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        errorText: provider.nameError,
-                        labelText: 'Name',
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        errorText: provider.emailError,
-                        labelText: 'Email',
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _addressController,
-                      decoration: InputDecoration(
-                        errorText: provider.addressError,
-                        labelText: 'Address',
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        errorText: provider.passwordError,
-                        labelText: 'Password',
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // Implement your sign up logic here
-                        String name = _nameController.text.trim();
-                        String email = _emailController.text.trim();
-                        String address = _addressController.text.trim();
-                        String password = _passwordController.text.trim();
-
-                        // Call your provider method to handle signup
-                        bool navigate = await provider.checkValidity(
-                            email, password, address, name);
-                        getToast(context, provider.toastMessage, provider.icon);
-                        if (navigate) {
-                          await pref.setString('jwt_token', provider.jwt);
-                          print(provider.jwt);
-                          pushReplacement(
-                              context,
-                              HomeScreen(
-                                token: provider.jwt,
-                              ));
-                        }
-                      },
-                      child: const Text('Sign Up'),
-                    ),
-                    const SizedBox(height: 20.0),
-                    GestureDetector(
-                      onTap: () {
-                        pushReplacement(context, SigninScreen());
-                      },
-                      child: const Text(
-                        'Already registered? Login',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
+              child: Stack(
+                children: [
+                  Container(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          errorText: provider.nameError,
+                          labelText: 'Name',
+                          border: const OutlineInputBorder(),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 20.0),
+                      TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          errorText: provider.emailError,
+                          labelText: 'Email',
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextField(
+                        controller: _addressController,
+                        decoration: InputDecoration(
+                          errorText: provider.addressError,
+                          labelText: 'Address',
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          errorText: provider.passwordError,
+                          labelText: 'Password',
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      ElevatedButton(
+                        onPressed: () async {
+                          // Implement your sign up logic here
+                          String name = _nameController.text.trim();
+                          String email = _emailController.text.trim();
+                          String address = _addressController.text.trim();
+                          String password = _passwordController.text.trim();
+
+                          // Call your provider method to handle signup
+                          bool navigate = await provider.checkValidity(
+                              email, password, address, name);
+                          getToast(
+                              context, provider.toastMessage, provider.icon);
+                          if (navigate) {
+                            await pref.setString('jwt_token', provider.jwt);
+                            print(provider.jwt);
+                            pushReplacement(
+                                context,
+                                HomeScreen(
+                                  token: provider.jwt,
+                                ));
+                          }
+                        },
+                        child: const Text('Sign Up'),
+                      ),
+                      const SizedBox(height: 20.0),
+                      GestureDetector(
+                        onTap: () {
+                          pushReplacement(context, SigninScreen());
+                        },
+                        child: const Text(
+                          'Already registered? Login',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+               provider.isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Container()
+                ],
+              )
             ),
           );
         });
