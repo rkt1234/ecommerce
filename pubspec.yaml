@@ -38,6 +38,8 @@ dependencies:
   provider: ^6.1.2
   carousel_slider: ^4.2.1
   cached_network_image: ^3.4.0
+  delightful_toast: ^1.1.0
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

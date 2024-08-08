@@ -21,7 +21,6 @@ class _ProductTileState extends State<ProductTile> {
             color: Colors.grey.withOpacity(0.5), // Shadow color
             spreadRadius: 3, // Spread radius
             blurRadius: 3, // Blur radius
-            // offset: Offset(0, 3), // Shadow position
           ),
         ],
         // border: Border.all(

@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Shopnow"),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.orangeAccent,
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
