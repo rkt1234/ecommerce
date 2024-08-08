@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce/services/product_api_service.dart';
 import 'package:flutter/material.dart';
 
 class ProductPage extends StatefulWidget {
@@ -10,11 +11,6 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final TextEditingController _reviewController = TextEditingController();
-  final List<String> _reviews = [
-    "Great product!",
-    "Really enjoyed it!",
-    "Could be better."
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -92,44 +88,58 @@ class _ProductPageState extends State<ProductPage> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _reviews.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white, // Background color
-                        borderRadius:
-                            BorderRadius.circular(10), // Rounded corners
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5), // Shadow color
-                            spreadRadius: 3, // Spread radius
-                            blurRadius: 3, // Blur radius
-                          ),
-                        ],
-                      ),
-                      child: const Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Naman Sharma : "),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Expanded(
-                              child: Text(
-                            "Product Description: This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.",
-                            maxLines: null,
-                            softWrap: true,
-                          ))
-                        ],
-                      ),
+              StreamBuilder<List<Map<String, String>>>(
+                stream: getReviews().asStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator()); // Show loading spinner while waiting
+                  } else if (snapshot.hasError) {
+                    return Text(
+                        'Error: ${snapshot.error}'); // Show error message if there's an error
+                  } else if (snapshot.hasData) {
+                    return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding:  EdgeInsets.all(8.0),
+                  child: Container(
+                    padding:  EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white, // Background color
+                      borderRadius:
+                          BorderRadius.circular(10), // Rounded corners
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5), // Shadow color
+                          spreadRadius: 3, // Spread radius
+                          blurRadius: 3, // Blur radius
+                        ),
+                      ],
                     ),
-                  );
+                    child:  Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(snapshot.data![index]['review']??""),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Expanded(
+                            child: Text(
+                          snapshot.data![index]['review']??"" ,
+                          maxLines: null,
+                          softWrap: true,
+                        ))
+                      ],
+                    ),
+                  ),
+                );
+              },
+                            );
+                  } else {
+                    return Text('No reviews available');
+                  }
                 },
               ),
               const SizedBox(height: 16),
@@ -155,9 +165,7 @@ class _ProductPageState extends State<ProductPage> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  onPressed: () {
-                  
-                  },
+                  onPressed: () {},
                   child: const Text("Submit Review",
                       style: TextStyle(fontSize: 18)),
                 ),

@@ -1,8 +1,6 @@
 import 'package:ecommerce/provider/signin_provider.dart';
 import 'package:ecommerce/provider/signup_provider.dart';
-import 'package:ecommerce/screens/home_page.dart';
 import 'package:ecommerce/screens/product_page.dart';
-import 'package:ecommerce/screens/signin.dart';
 import 'package:ecommerce/screens/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -37,7 +35,8 @@ class _MyAppState extends State<MyApp> {
     if (token == null || JwtDecoder.isExpired(token)) {
       return const SignupScreen();
     } else {
-      return HomeScreen(token: token);
+      // return HomeScreen(token: token);
+      return const ProductPage();
       // return CreateBlog();
     }
   }
