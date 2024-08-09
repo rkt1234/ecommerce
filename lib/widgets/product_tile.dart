@@ -2,7 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ProductTile extends StatefulWidget {
-  const ProductTile({super.key});
+  final String title;
+  final String description;
+  final String category;
+  final dynamic price;
+  final int productId;
+  const ProductTile({super.key, required this.title, required this.description, required this.category, required this.price, required this.productId});
 
   @override
   State<ProductTile> createState() => _ProductTileState();
@@ -42,46 +47,46 @@ class _ProductTileState extends State<ProductTile> {
           const SizedBox(
             width: 10,
           ),
-          const Flexible(
+           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "titlehfilrewhiluhreilguilrgviureivhiorehviorehvioeh",
+                  widget.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  "descriptionefhuirefvhreihvioreiovheohvodhfvh dhoc",
+                 Text(
+                  widget.description,
                   maxLines: 1,
                   overflow: TextOverflow.fade,
                   style: TextStyle(
                     color: Colors.grey,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  "categoryfbjrefknrekgnvkreeikelkrnbvlkresklvnlkrfonfdelv",
+                 Text(
+                  'Cat: ${widget.category.toString()}',
                   maxLines: 1,
                   overflow: TextOverflow.fade,
                   style: TextStyle(
                     color: Colors.grey,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  "pricejbfreuilfheilhfoirehgo;reo;gvho;eirhvoi;erajv",
+                 Text(
+                  'Price: ${widget.price.toString()}',
                   maxLines: 1,
                   overflow: TextOverflow.fade,
                   style: TextStyle(

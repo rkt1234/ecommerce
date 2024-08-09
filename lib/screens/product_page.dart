@@ -6,8 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
+  final String title;
+  final String description;
+  final String category;
+  final dynamic price;
+  final int productId;
   final token;
-  const ProductPage({super.key, this.token});
+  const ProductPage({super.key, this.token, required this.title, required this.description, required this.category, this.price, required this.productId});
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -29,7 +34,7 @@ class _ProductPageState extends State<ProductPage> {
       _isFetching = true; // Start fetching, show progress indicator
     });
 
-    _futureReviews = getReviews();
+    _futureReviews = getReviews(widget.productId);
 
     _futureReviews.whenComplete(() {
       setState(() {
@@ -68,24 +73,24 @@ class _ProductPageState extends State<ProductPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    "Product Title",
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                   Text(
+                    widget.title,
+                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    "Product Description: This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.",
-                    style: TextStyle(fontSize: 18),
+                   Text(
+                    widget.description,
+                    style: const TextStyle(fontSize: 18),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    "Category: Electronics",
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                   Text(
+                    "Category: ${widget.category}",
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    "Cost: \$99.99",
-                    style: TextStyle(
+                   Text(
+                    "Cost: ${widget.price}",
+                    style: const TextStyle(
                         fontSize: 20,
                         color: Colors.green,
                         fontWeight: FontWeight.bold),
@@ -152,14 +157,13 @@ class _ProductPageState extends State<ProductPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(snapshot.data![index]['review'] ??
-                                          ""),
+                                      Text("${snapshot.data![index]['customerName']} : "),
                                       const SizedBox(
                                         width: 5,
                                       ),
                                       Expanded(
                                         child: Text(
-                                          snapshot.data![index]['review'] ?? "",
+                                          snapshot.data![index]['review']!,
                                           maxLines: null,
                                           softWrap: true,
                                         ),
@@ -200,7 +204,7 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                       onPressed: () async {
                         String? message = await provider.checkValidity(
-                            widget.token, _reviewController.text, 1);
+                            widget.token, _reviewController.text, widget.productId);
                         if (message == "Review added successfully") {
                           setState(() {
                             _reviewController.clear();

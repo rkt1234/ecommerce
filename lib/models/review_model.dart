@@ -2,8 +2,9 @@ class ReviewModel {
   final String review;
   final int productId;
   final int customerId;
+  final String customerName;
 
-  ReviewModel(this.review, this.productId, this.customerId) {
+  ReviewModel(this.review, this.productId, this.customerId, this.customerName) {
 
   }
 
@@ -11,7 +12,8 @@ class ReviewModel {
     Map<String, dynamic> userObject = {
       'review': review,
       'customerId': customerId,
-      'productId': productId
+      'productId': productId,
+      'customerName':customerName
     };
     return userObject;
   }

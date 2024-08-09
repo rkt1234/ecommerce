@@ -10,8 +10,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  final token;
-  const HomeScreen({super.key, this.token});
+  final String token;
+  const HomeScreen({super.key, required this.token});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,13 +19,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late SharedPreferences pref;
+  late Future<List<Map<String, dynamic>>> _productsFuture;
+  String selectedCategory = "all"; // Initial category
+
   @override
   void initState() {
     super.initState();
     initSharedPreferences();
-    Map<String, dynamic> jwtDecoded = JwtDecoder.decode(
-      widget.token,
-    );
+    updateProductsFuture(); // Fetch products initially
+
+    Map<String, dynamic> jwtDecoded = JwtDecoder.decode(widget.token);
     print(widget.token);
     print(jwtDecoded);
     customerName = jwtDecoded['customerName'];
@@ -38,8 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
     pref = await SharedPreferences.getInstance();
   }
 
-  bool isselected = false;
-  String selectedCategory = "All";
+  void updateProductsFuture() {
+    // Update _productsFuture whenever the selected category changes
+    setState(() {
+      _productsFuture =
+          getProducts(selectedCategory); // Fetch products based on category
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,44 +126,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 50,
                   child: FutureBuilder<List<String>>(
                     future:
-                        getCategory(), // Replace with your actual stream or future returning categories
+                        getCategory(), // Replace with your actual future returning categories
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return  ListView.builder(
-        itemCount: snapshot.data!.length,
-        // shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: ChoiceChip(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              label: Text(snapshot.data![index]),
-              selected: selectedCategory == snapshot.data![index],
-              onSelected: (selected) {
-                setState(() {
-                  selectedCategory = snapshot.data![index];
-                });
-              },
-            ),
-          );
-          },
-);
-                        // return ListView.builder(
-                        //   itemCount: snapshot.data!.length,
-                        //   itemBuilder: (context, index) {
-                        //     return ListTile(
-                        //       title: Text(snapshot.data![index]),
-                        //       // You can add more widgets here to display additional info
-                        //     );
-                        //   },
-                        // );
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: ChoiceChip(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                label: Text(snapshot.data![index]),
+                                selected:
+                                    selectedCategory == snapshot.data![index],
+                                onSelected: (selected) {
+                                  setState(() {
+                                    selectedCategory = snapshot.data![index];
+                                    updateProductsFuture(); // Update products based on the selected category
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        );
                       } else if (snapshot.hasError) {
-                        print(snapshot.error);
                         return Text('Error: ${snapshot.error}');
                       }
                       // By default, show a loading spinner
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     },
                   )),
             ],
@@ -174,25 +176,53 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Flexible(
             child: Container(
-              // decoration: BoxDecoration(border: Border.all(color: Colors.black)),r
               margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 190,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      push(context, ProductPage(token: widget.token));
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: ProductTile(),
-                    ),
-                  );
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _productsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            push(
+                                context,
+                                ProductPage(
+                                  token: widget.token,
+                                  title: snapshot.data![index]['title'],
+                                  description: snapshot.data![index]['description'],
+                                  category: snapshot.data![index]['category'],
+                                  productId: snapshot.data![index]['productid'],
+                                  price: snapshot.data![index]['price'],
+                                ));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            child: ProductTile(
+                              // Pass the product data to the ProductTile widget
+                              title: snapshot.data![index]['title'],
+                              description: snapshot.data![index]['description'],
+                              price: snapshot.data![index]['price'],
+                              category: snapshot.data![index]['category'],
+                              productId: snapshot.data![index]['productid'],
+                              // Add more properties as needed
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
                 },
               ),
             ),
-          )
+          ),
         ],
       ),
     );

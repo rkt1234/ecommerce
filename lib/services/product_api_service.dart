@@ -13,16 +13,17 @@ Future<List<String>> getCategory() async {
     List<dynamic> data = jsonDecode(response.body);
 
     // Convert List<dynamic> to List<String>
-    List<String> categories = data.map((category) => category.toString()).toList();
-    
+    List<String> categories =
+        data.map((category) => category.toString()).toList();
+
     return categories;
   } else {
     throw Exception('Failed to load categories');
   }
 }
 
-Future<List<Map<String, String>>> getReviews() async {
-  final body = jsonEncode({'productId': 1});
+Future<List<Map<String, String>>> getReviews(int productId) async {
+  final body = jsonEncode({'productId': productId});
   final response = await http.post(
     Uri.parse(fetchReviewsUrl),
     headers: {
@@ -46,9 +47,10 @@ Future<List<Map<String, String>>> getReviews() async {
   }
 }
 
-Future<List<Map<String, String>>> getProducts(String selectedCategory) async {
-  final url = fetchCategoriesUrl + selectedCategory;
-
+Future<List<Map<String, dynamic>>> getProducts(String selectedCategory) async {
+  final url = fetchProductsUrl + selectedCategory;
+  print("hello");
+print(url);
   try {
     final response = await http.get(Uri.parse(url));
 
@@ -57,8 +59,8 @@ Future<List<Map<String, String>>> getProducts(String selectedCategory) async {
       List<dynamic> productsJson = jsonDecode(response.body);
       print(productsJson);
       // Convert each JSON object to a Map<String, String>
-      List<Map<String, String>> products = productsJson.map((json) {
-        return Map<String, String>.from(json);
+      List<Map<String, dynamic>> products = productsJson.map((json) {
+        return Map<String, dynamic>.from(json);
       }).toList();
 
       return products;
@@ -72,11 +74,9 @@ Future<List<Map<String, String>>> getProducts(String selectedCategory) async {
   }
 }
 
-
-
 Future<String> addReviews(String token, String review, int productId) async {
   // Convert the ReviewModel to JSON
-  final body = jsonEncode(ReviewModel(review, productId, customerId).toJson());
+  final body = jsonEncode(ReviewModel(review, productId, customerId, customerName).toJson());
 
   // Define the headers for the request
   final headers = {
@@ -86,7 +86,8 @@ Future<String> addReviews(String token, String review, int productId) async {
 
   try {
     // Send the POST request
-    final response = await http.post(Uri.parse(addReviewUrl), body: body, headers: headers);
+    final response =
+        await http.post(Uri.parse(addReviewUrl), body: body, headers: headers);
 
     // Check the response status code
     if (response.statusCode == 200) {
