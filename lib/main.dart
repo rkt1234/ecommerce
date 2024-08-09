@@ -1,5 +1,7 @@
+import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/signin_provider.dart';
 import 'package:ecommerce/provider/signup_provider.dart';
+import 'package:ecommerce/screens/home_page.dart';
 import 'package:ecommerce/screens/product_page.dart';
 import 'package:ecommerce/screens/signup.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => SignupProvider()),
         ChangeNotifierProvider(create: (context) => SigninProvider()),
-        // ChangeNotifierProvider(create: (context) => CreateProvider()),
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
         // ChangeNotifierProvider(create: (context) => EditProvider()),
       ],
       child: MaterialApp(
@@ -35,8 +37,8 @@ class _MyAppState extends State<MyApp> {
     if (token == null || JwtDecoder.isExpired(token)) {
       return const SignupScreen();
     } else {
-      // return HomeScreen(token: token);
-      return const ProductPage();
+      return HomeScreen(token: token);
+      // return const ProductPage();
       // return CreateBlog();
     }
   }

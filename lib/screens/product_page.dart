@@ -1,9 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/services/product_api_service.dart';
+import 'package:ecommerce/services/toast_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key});
+  final token;
+  const ProductPage({super.key, this.token});
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -11,169 +15,224 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final TextEditingController _reviewController = TextEditingController();
+  late Future<List<Map<String, String>>> _futureReviews;
+  bool _isFetching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchReviews();
+  }
+
+  void fetchReviews() {
+    setState(() {
+      _isFetching = true; // Start fetching, show progress indicator
+    });
+
+    _futureReviews = getReviews();
+
+    _futureReviews.whenComplete(() {
+      setState(() {
+        _isFetching = false; // Done fetching, hide progress indicator
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Product Page"),
-        backgroundColor: Colors.teal,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CachedNetworkImage(
-                    height: 250,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    imageUrl:
-                        "https://w0.peakpx.com/wallpaper/908/670/HD-wallpaper-dhoni-sports-uniform-cricket-ms-dhoni-mahendra-singh-dhoni-thumbnail.jpg",
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Product Title",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Product Description: This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.",
-                style: TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Category: Electronics",
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Cost: \$99.99",
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 12),
-                    // primary: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  onPressed: () {
-                    // Add to cart functionality
-                  },
-                  child:
-                      const Text("Add to Cart", style: TextStyle(fontSize: 18)),
-                ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                "Reviews",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              StreamBuilder<List<Map<String, String>>>(
-                stream: getReviews().asStream(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator()); // Show loading spinner while waiting
-                  } else if (snapshot.hasError) {
-                    return Text(
-                        'Error: ${snapshot.error}'); // Show error message if there's an error
-                  } else if (snapshot.hasData) {
-                    return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding:  EdgeInsets.all(8.0),
-                  child: Container(
-                    padding:  EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white, // Background color
-                      borderRadius:
-                          BorderRadius.circular(10), // Rounded corners
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5), // Shadow color
-                          spreadRadius: 3, // Spread radius
-                          blurRadius: 3, // Blur radius
-                        ),
-                      ],
-                    ),
-                    child:  Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(snapshot.data![index]['review']??""),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                            child: Text(
-                          snapshot.data![index]['review']??"" ,
-                          maxLines: null,
-                          softWrap: true,
-                        ))
-                      ],
-                    ),
-                  ),
-                );
-              },
-                            );
-                  } else {
-                    return Text('No reviews available');
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _reviewController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  labelText: "Write a review",
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 12),
-                    // primary: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: const Text("Submit Review",
-                      style: TextStyle(fontSize: 18)),
-                ),
-              ),
-            ],
+    return Consumer<ProductProvider>(
+      builder: (context, provider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Product Page"),
+            backgroundColor: Colors.teal,
           ),
-        ),
-      ),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: CachedNetworkImage(
+                        height: 250,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        imageUrl:
+                            "https://w0.peakpx.com/wallpaper/908/670/HD-wallpaper-dhoni-sports-uniform-cricket-ms-dhoni-mahendra-singh-dhoni-thumbnail.jpg",
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Product Title",
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Product Description: This is an amazing product that you will love! It has several features and benefits that make it a must-have item for anyone.",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Category: Electronics",
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Cost: \$99.99",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () {
+                        // Add to cart functionality
+                      },
+                      child: const Text("Add to Cart",
+                          style: TextStyle(fontSize: 18)),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "Reviews",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  if (_isFetching)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    FutureBuilder<List<Map<String, String>>>(
+                      future: _futureReviews,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child:
+                                  CircularProgressIndicator()); // Show loading spinner while waiting
+                        } else if (snapshot.hasError) {
+                          return Text(
+                              'Error: ${snapshot.error}'); // Show error message if there's an error
+                        } else if (snapshot.hasData) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white, // Background color
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 3,
+                                        blurRadius: 3,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(snapshot.data![index]['review'] ??
+                                          ""),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          snapshot.data![index]['review'] ?? "",
+                                          maxLines: null,
+                                          softWrap: true,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          return const Text('No reviews available');
+                        }
+                      },
+                    ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _reviewController,
+                    decoration: InputDecoration(
+                      errorText: provider.reviewError,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      labelText: "Write a review",
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
+                    maxLines: null,
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () async {
+                        String? message = await provider.checkValidity(
+                            widget.token, _reviewController.text, 1);
+                        if (message == "Review added successfully") {
+                          setState(() {
+                            _reviewController.clear();
+                            _isFetching =
+                                true; // Start fetching, show progress indicator
+                          });
+
+                          fetchReviews();
+
+                          getToast(
+                            context,
+                            message!,
+                            const Icon(Icons.check, color: Colors.green),
+                          );
+                        } else if (message != null) {
+                          getToast(
+                            context,
+                            message,
+                            const Icon(Icons.error, color: Colors.red),
+                          );
+                        }
+                      },
+                      child: const Text("Submit Review",
+                          style: TextStyle(fontSize: 18)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

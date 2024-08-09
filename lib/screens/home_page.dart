@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecommerce/screens/product_page.dart';
 import 'package:ecommerce/screens/signin.dart';
 import 'package:ecommerce/services/navigation_service.dart';
 import 'package:ecommerce/services/product_api_service.dart';
@@ -179,9 +180,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 shrinkWrap: true,
                 itemCount: 190,
                 itemBuilder: (context, index) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: ProductTile(),
+                  return GestureDetector(
+                    onTap: () {
+                      push(context, ProductPage(token: widget.token));
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      child: ProductTile(),
+                    ),
                   );
                 },
               ),
