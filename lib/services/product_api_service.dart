@@ -104,3 +104,44 @@ Future<String> addReviews(String token, String review, int productId) async {
   }
 }
 
+Future<String> addToCart(String token, int productId, dynamic total, int quantity) async {
+  // Assuming customerId is already defined somewhere in your code
+   // Replace with actual customerId
+
+  // API endpoint to add to cart
+  
+
+  // Create the body for the POST request
+  Map<String, dynamic> body = {
+    "productId": productId, // Replace with actual productId
+    "quantity": quantity,
+    "customerId": customerId,
+    "total": total,
+  };
+   final headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  };
+
+  try {
+    // Make POST request
+    var response = await http.post(
+      Uri.parse(addToCartUrl),
+      body: jsonEncode(body),
+      headers: headers
+    );
+
+    // Check if request was successful (status code 200)
+    if (response.statusCode == 200) {
+      // Return success message or handle response data as needed
+      return 'Product added to cart successfully';
+    } else {
+      // Handle other status codes if needed
+      return 'Failed to add product to cart: ${response.statusCode}';
+    }
+  } catch (e) {
+    // Handle any exceptions that occur during the request
+    return 'Error adding product to cart: $e';
+  }
+}
+

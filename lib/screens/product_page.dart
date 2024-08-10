@@ -4,6 +4,7 @@ import 'package:ecommerce/services/product_api_service.dart';
 import 'package:ecommerce/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductPage extends StatefulWidget {
   final String title;
@@ -11,14 +12,22 @@ class ProductPage extends StatefulWidget {
   final String category;
   final dynamic price;
   final int productId;
-  final token;
-  const ProductPage({super.key, this.token, required this.title, required this.description, required this.category, this.price, required this.productId});
+  final String token;
+  const ProductPage(
+      {super.key,
+      required this.token,
+      required this.title,
+      required this.description,
+      required this.category,
+      this.price,
+      required this.productId});
 
   @override
   _ProductPageState createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
+  late SharedPreferences pref;
   final TextEditingController _reviewController = TextEditingController();
   late Future<List<Map<String, String>>> _futureReviews;
   bool _isFetching = false;
@@ -26,7 +35,11 @@ class _ProductPageState extends State<ProductPage> {
   @override
   void initState() {
     super.initState();
+    initSharedPreferences();
     fetchReviews();
+  }
+    void initSharedPreferences() async {
+    pref = await SharedPreferences.getInstance();
   }
 
   void fetchReviews() {
@@ -73,22 +86,23 @@ class _ProductPageState extends State<ProductPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                   Text(
+                  Text(
                     widget.title,
-                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                   Text(
+                  Text(
                     widget.description,
                     style: const TextStyle(fontSize: 18),
                   ),
                   const SizedBox(height: 8),
-                   Text(
+                  Text(
                     "Category: ${widget.category}",
                     style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 8),
-                   Text(
+                  Text(
                     "Cost: ${widget.price}",
                     style: const TextStyle(
                         fontSize: 20,
@@ -105,8 +119,50 @@ class _ProductPageState extends State<ProductPage> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async{
                         // Add to cart functionality
+                        bool? ispresent=pref.getBool(widget.title);
+                        print(ispresent);
+                        if (ispresent == null) {
+                          String message = await addToCart(
+                              widget.token, widget.productId, widget.price, 1);
+
+                          if (message == "Product added to cart successfully") {
+                            await pref.setBool(widget.title,
+                                true); // Await to ensure completion
+                            print(message);
+
+                            // Force a rebuild if necessary (optional)
+                            if (mounted) {
+                              setState(() {});
+                            }
+
+                            getToast(
+                              context,
+                              message,
+                              const Icon(
+                                Icons.check,
+                                color: Colors.green,
+                              ),
+                            );
+                          } else {
+                            getToast(
+                              context,
+                              message,
+                              const Icon(
+                                Icons.error,
+                                color: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+
+                        else {
+                          getToast(context, "Already added in cart", const Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                ));
+                        }
                       },
                       child: const Text("Add to Cart",
                           style: TextStyle(fontSize: 18)),
@@ -157,7 +213,8 @@ class _ProductPageState extends State<ProductPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text("${snapshot.data![index]['customerName']} : "),
+                                      Text(
+                                          "${snapshot.data![index]['customerName']} : "),
                                       const SizedBox(
                                         width: 5,
                                       ),
@@ -204,7 +261,9 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                       onPressed: () async {
                         String? message = await provider.checkValidity(
-                            widget.token, _reviewController.text, widget.productId);
+                            widget.token,
+                            _reviewController.text,
+                            widget.productId);
                         if (message == "Review added successfully") {
                           setState(() {
                             _reviewController.clear();
