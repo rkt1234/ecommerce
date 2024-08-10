@@ -1,6 +1,8 @@
+import 'package:ecommerce/provider/cart_provider.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/signin_provider.dart';
 import 'package:ecommerce/provider/signup_provider.dart';
+import 'package:ecommerce/screens/cart_page.dart';
 import 'package:ecommerce/screens/home_page.dart';
 import 'package:ecommerce/screens/product_page.dart';
 import 'package:ecommerce/screens/signup.dart';
@@ -16,7 +18,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => SignupProvider()),
         ChangeNotifierProvider(create: (context) => SigninProvider()),
         ChangeNotifierProvider(create: (context) => ProductProvider()),
-        // ChangeNotifierProvider(create: (context) => EditProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false, home: MyApp(prefs: prefs))));
@@ -33,13 +35,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    // return CartPage();
      String? token = widget.prefs.getString('jwt_token');
     if (token == null || JwtDecoder.isExpired(token)) {
       return const SignupScreen();
     } else {
       return HomeScreen(token: token);
       // return const ProductPage();
-      // return CreateBlog();
+      // return CartPage();
     }
   }
   }
