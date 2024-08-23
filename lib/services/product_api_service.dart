@@ -168,3 +168,24 @@ Future<List<Map<String, dynamic>>> fetchCart(String token) async {
     throw Exception('Failed to load cart');
   }
 }
+
+Future<void> updateCart(int cartId,int quantity, String token) async{
+  print("isme aa chuka hai bhai");
+  final headers = {
+    'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json',
+  };
+  Map<String,int> body={
+    'cartId':cartId,
+    'quantity':quantity
+  };
+
+  try {
+    final response = await http.put(Uri.parse(updateCartUrl), headers: headers, body: jsonEncode(body));
+    print(response.body);
+  }
+  catch(e) {
+
+  }
+
+}
