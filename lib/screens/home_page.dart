@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Map<String, dynamic>>> _productsFuture;
   String selectedCategory = "all"; // Initial category
   int _selectedIndex = 0;
-
   final List<Widget> _pages = [];
 
   @override
@@ -31,19 +30,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     initSharedPreferences();
     updateProductsFuture(); // Fetch products initially
-
     Map<String, dynamic> jwtDecoded = JwtDecoder.decode(widget.token);
-    print(widget.token);
-    print(jwtDecoded);
     customerName = jwtDecoded['customerName'];
     customerId = jwtDecoded['sub'];
     customerAddress = jwtDecoded['address'];
     customerEmail = jwtDecoded['email'];
-
+    print(widget.token);
     _pages.addAll([
       buildHomeScreen(),
+
       // ProfilePage(), // Replace with your ProfilePage widget
-      CartPage(), // CartPage widget
+      CartPage(token: widget.token) // CartPage widget
     ]);
   }
 

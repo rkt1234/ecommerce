@@ -1,21 +1,41 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce/provider/cart_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  final String token;
+  const CartPage({super.key, required this.token});
 
   @override
   State<CartPage> createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
+   @override
+  void initState() {
+    print(widget.token);
+    super.initState();
+    _fetchCartDetails();
+  }
+
+  void _fetchCartDetails() async {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false); 
+    await cartProvider.getCartItems(widget.token);
+    setState(() {
+      
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Consumer<CartProvider>(
+      builder: (context, cartProvider, child) {
+        return Column(
       children: [
         Flexible(
           child: ListView.builder(
-            itemCount: 5,
+            itemCount: cartProvider.cart.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -53,11 +73,11 @@ class _CartPageState extends State<CartPage> {
                         
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "widget.tit",
+                             Text(
+                              cartProvider.cart[index]['title'],
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
@@ -65,22 +85,14 @@ class _CartPageState extends State<CartPage> {
                             const SizedBox(
                               height: 8,
                             ),
-                            const Text(
-                              "widget.qty",
-                              maxLines: 1,
-                              overflow: TextOverflow.fade,
-                              style: TextStyle(
-                                color: Colors.grey,
-                              ),
-                            ),
                             const SizedBox(
                               height: 8,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Qty:}',
+                                 Text(
+                                  cartProvider.cart[index]['quantity'].toString(),
                                   maxLines: 1,
                                   overflow: TextOverflow.fade,
                                   style: TextStyle(
@@ -96,7 +108,13 @@ class _CartPageState extends State<CartPage> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                               if (cartProvider.cart[index]['quantity']>=1) {
+                                        cartProvider.updateQuantity(
+                                            index, cartProvider.cart[index]
+                                                    ['quantity'] + 1);
+                                      }
+                            },
                             icon: const Icon(
                               Icons.exposure_plus_1,
                               color: Colors.green,
@@ -104,7 +122,15 @@ class _CartPageState extends State<CartPage> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              if (cartProvider.cart[index]['quantity']>1) {
+                                        cartProvider.updateQuantity(
+                                            index,
+                                            cartProvider.cart[index]
+                                                    ['quantity'] -
+                                                1);
+                                      }
+                            },
                             icon: const Icon(
                               Icons.exposure_minus_1,
                               color: Colors.red,
@@ -116,8 +142,8 @@ class _CartPageState extends State<CartPage> {
                             const SizedBox(
                               height: 8,
                             ),
-                            const Text(
-                              'Price: {}',
+                             Text(
+                              cartProvider.cart[index]['total'].toString(),
                               maxLines: 1,
                               overflow: TextOverflow.fade,
                               style: TextStyle(
@@ -137,6 +163,8 @@ class _CartPageState extends State<CartPage> {
           ),
         )
       ],
+    );
+      }
     );
   }
 }

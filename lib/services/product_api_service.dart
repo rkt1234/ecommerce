@@ -50,7 +50,7 @@ Future<List<Map<String, String>>> getReviews(int productId) async {
 Future<List<Map<String, dynamic>>> getProducts(String selectedCategory) async {
   final url = fetchProductsUrl + selectedCategory;
   print("hello");
-print(url);
+  print(url);
   try {
     final response = await http.get(Uri.parse(url));
 
@@ -76,7 +76,8 @@ print(url);
 
 Future<String> addReviews(String token, String review, int productId) async {
   // Convert the ReviewModel to JSON
-  final body = jsonEncode(ReviewModel(review, productId, customerId, customerName).toJson());
+  final body = jsonEncode(
+      ReviewModel(review, productId, customerId, customerName).toJson());
 
   // Define the headers for the request
   final headers = {
@@ -104,12 +105,12 @@ Future<String> addReviews(String token, String review, int productId) async {
   }
 }
 
-Future<String> addToCart(String token, int productId, dynamic total, int quantity) async {
+Future<String> addToCart(
+    String token, int productId, dynamic total, int quantity) async {
   // Assuming customerId is already defined somewhere in your code
-   // Replace with actual customerId
+  // Replace with actual customerId
 
   // API endpoint to add to cart
-  
 
   // Create the body for the POST request
   Map<String, dynamic> body = {
@@ -118,18 +119,15 @@ Future<String> addToCart(String token, int productId, dynamic total, int quantit
     "customerId": customerId,
     "total": total,
   };
-   final headers = {
+  final headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer $token',
   };
 
   try {
     // Make POST request
-    var response = await http.post(
-      Uri.parse(addToCartUrl),
-      body: jsonEncode(body),
-      headers: headers
-    );
+    var response = await http.post(Uri.parse(addToCartUrl),
+        body: jsonEncode(body), headers: headers);
 
     // Check if request was successful (status code 200)
     if (response.statusCode == 200) {
@@ -145,3 +143,28 @@ Future<String> addToCart(String token, int productId, dynamic total, int quantit
   }
 }
 
+Future<List<Map<String, dynamic>>> fetchCart(String token) async {
+  
+  final headers = {
+    'Authorization': 'Bearer $token',
+  };
+  try {
+    final response = await http.get(Uri.parse(fetchCartUrl), headers: headers);
+    if (response.statusCode == 200) {
+      List<dynamic> decodedResponse = jsonDecode(response.body);
+
+      // Ensure the decoded response is a list of maps
+      return decodedResponse
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+    } else {
+      // Handle non-200 responses here, maybe log the error or notify the user
+      print('Failed to fetch cart items: ${response.statusCode}');
+      throw Exception('Failed to load cart');
+    }
+  } catch (e) {
+    // Handle any exceptions such as network issues or JSON decoding errors
+    print('An error occurred: $e');
+    throw Exception('Failed to load cart');
+  }
+}

@@ -5,4 +5,6 @@ const fetchReviewsUrl = "https://ecommercebackend-o1j1.onrender.com/product/fetc
 const fetchProductsUrl = "https://ecommercebackend-o1j1.onrender.com/product/fetch/products/?category=";
 const addReviewUrl = "https://ecommercebackend-o1j1.onrender.com/product/add/review";
 const addToCartUrl = "https://ecommercebackend-o1j1.onrender.com/product/add/cart";
+const fetchCartUrl = "https://ecommercebackend-o1j1.onrender.com/product/fetch/cart";
+const updateCartUrl = "https://ecommercebackend-o1j1.onrender.com/product/update/cart";
 

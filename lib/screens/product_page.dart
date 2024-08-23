@@ -158,6 +158,7 @@ class _ProductPageState extends State<ProductPage> {
                         }
 
                         else {
+                          pref.remove(widget.title);
                           getToast(context, "Already added in cart", const Icon(
                                   Icons.check,
                                   color: Colors.green,
