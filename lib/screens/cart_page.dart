@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce/provider/cart_provider.dart';
 import 'package:ecommerce/services/product_api_service.dart';
+import 'package:ecommerce/services/toast_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -112,7 +113,19 @@ class _CartPageState extends State<CartPage> {
                                             ),
                                           ),
                                           IconButton(
-                                            onPressed: () {},
+                                            onPressed: () async{
+                                              String message=await deleteCartItem(
+                                                      cartProvider.cart[index]
+                                                          ['cartid'], widget.token);
+                                                          setState(() {
+                                                            
+                                                          });
+                                                if(message=="Item deleted successfully")
+                                                getToast(context, message, Icon(Icons.check,color: Colors.green,));
+                                                else
+                                                getToast(context, message, Icon(Icons.error,color: Colors.red,));
+
+                                            },
                                             icon: const Icon(
                                               Icons.delete,
                                               color: Colors.red,

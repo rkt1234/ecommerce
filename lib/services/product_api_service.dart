@@ -144,7 +144,6 @@ Future<String> addToCart(
 }
 
 Future<List<Map<String, dynamic>>> fetchCart(String token) async {
-  
   final headers = {
     'Authorization': 'Bearer $token',
   };
@@ -169,23 +168,33 @@ Future<List<Map<String, dynamic>>> fetchCart(String token) async {
   }
 }
 
-Future<void> updateCart(int cartId,int quantity, String token) async{
+Future<void> updateCart(int cartId, int quantity, String token) async {
   print("isme aa chuka hai bhai");
   final headers = {
     'Authorization': 'Bearer $token',
     'Content-Type': 'application/json',
   };
-  Map<String,int> body={
-    'cartId':cartId,
-    'quantity':quantity
-  };
+  Map<String, int> body = {'cartId': cartId, 'quantity': quantity};
 
   try {
-    final response = await http.put(Uri.parse(updateCartUrl), headers: headers, body: jsonEncode(body));
+    final response = await http.put(Uri.parse(updateCartUrl),
+        headers: headers, body: jsonEncode(body));
     print(response.body);
-  }
-  catch(e) {
+  } catch (e) {}
+}
 
+Future<String> deleteCartItem(int cartId, String token) async{
+  //
+  final headers = {
+    'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json',
+  };
+  Map<String, int> body = {'cartId': cartId};
+  try {
+    final response = await http.delete(Uri.parse(deleteCartUrl), headers: headers, body: jsonEncode(body));
+    return jsonDecode(response.body)['message'];
   }
-
+  catch (e) {
+    return "Could not delete item";
+  }
 }
