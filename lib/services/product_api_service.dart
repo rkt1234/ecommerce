@@ -133,6 +133,9 @@ Future<String> addToCart(
     if (response.statusCode == 200) {
       // Return success message or handle response data as needed
       return 'Product added to cart successfully';
+    }
+    else if(response.statusCode == 409) {
+        return 'Product already added in cart';
     } else {
       // Handle other status codes if needed
       return 'Failed to add product to cart: ${response.statusCode}';

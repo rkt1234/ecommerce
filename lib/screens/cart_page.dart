@@ -21,12 +21,17 @@ class _CartPageState extends State<CartPage> {
     _fetchCartDetails();
   }
 
-  void _fetchCartDetails() async {
-    _futureCart = fetchCart(widget.token);
+void _fetchCartDetails() {
+  
+    setState(() {
+      _futureCart = fetchCart(widget.token);
+    });
   }
+
 
   @override
   Widget build(BuildContext context) {
+    print("rebuild ho rha h");
     return Consumer<CartProvider>(builder: (context, cartProvider, child) {
       return Column(
         children: [
@@ -117,9 +122,7 @@ class _CartPageState extends State<CartPage> {
                                               String message=await deleteCartItem(
                                                       cartProvider.cart[index]
                                                           ['cartid'], widget.token);
-                                                          setState(() {
-                                                            
-                                                          });
+                                                    _fetchCartDetails();
                                                 if(message=="Item deleted successfully")
                                                 getToast(context, message, Icon(Icons.check,color: Colors.green,));
                                                 else
