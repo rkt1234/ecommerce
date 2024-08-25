@@ -231,9 +231,10 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart), label: "Cart"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag), label: "Cart"),
+        
         ],
       ),
     );
