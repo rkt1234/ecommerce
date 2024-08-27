@@ -247,7 +247,7 @@ Future<List<Map<String, dynamic>>> fetchOrder(String token) async {
   try {
     final response = await http.get(Uri.parse(fetchOrderUrl), headers: headers);
     if (response.statusCode == 200) {
-      List<dynamic> decodedResponse = jsonDecode(response.body);
+      List<dynamic> decodedResponse = jsonDecode(response.body)['orders'];
   print(decodedResponse);
       // Ensure the decoded response is a list of maps
       return decodedResponse

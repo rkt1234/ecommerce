@@ -21,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late SharedPreferences pref;
+  late Future<List<String>> _categoryFuture;
   late Future<List<Map<String, dynamic>>> _productsFuture;
   String selectedCategory = "all"; // Initial category
   int _selectedIndex = 0;
@@ -30,7 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     initSharedPreferences();
-    updateProductsFuture(); // Fetch products initially
+    _categoryFuture = getCategory(); // Initialize category future
+    _productsFuture =
+        getProducts(selectedCategory); // Initialize products future
     Map<String, dynamic> jwtDecoded = JwtDecoder.decode(widget.token);
     customerName = jwtDecoded['customerName'];
     customerId = jwtDecoded['sub'];
@@ -39,10 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
     print(widget.token);
     _pages.addAll([
       buildHomeScreen(),
-
-      // ProfilePage(), // Replace with your ProfilePage widget
       CartPage(token: widget.token), // CartPage widget
-      ProfilePage(token: widget.token,)
+      ProfilePage(token: widget.token),
     ]);
   }
 
@@ -50,18 +51,14 @@ class _HomeScreenState extends State<HomeScreen> {
     pref = await SharedPreferences.getInstance();
   }
 
-  void updateProductsFuture() {
-    // Update _productsFuture whenever the selected category changes
-    setState(() {
-      _productsFuture =
-          getProducts(selectedCategory); // Fetch products based on category
-    });
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<List<Map<String, dynamic>>> _getProducts() {
+    return getProducts(selectedCategory);
   }
 
   Widget buildHomeScreen() {
@@ -117,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 10),
               height: 50,
               child: FutureBuilder<List<String>>(
-                future: getCategory(),
+                future: _categoryFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
@@ -134,7 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             onSelected: (selected) {
                               setState(() {
                                 selectedCategory = snapshot.data![index];
-                                updateProductsFuture();
+                                _productsFuture =
+                                    _getProducts(); // Update products future
                               });
                             },
                           ),
@@ -166,9 +164,15 @@ class _HomeScreenState extends State<HomeScreen> {
               future: _productsFuture,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  var filteredProducts = snapshot.data!
+                      .where((product) =>
+                          product['category'] == selectedCategory ||
+                          selectedCategory == 'all')
+                      .toList();
+
                   return ListView.builder(
                     shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
+                    itemCount: filteredProducts.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
@@ -176,11 +180,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             ProductPage(
                               token: widget.token,
-                              title: snapshot.data![index]['title'],
-                              description: snapshot.data![index]['description'],
-                              category: snapshot.data![index]['category'],
-                              productId: snapshot.data![index]['productid'],
-                              price: snapshot.data![index]['price'],
+                              title: filteredProducts[index]['title'],
+                              description: filteredProducts[index]
+                                  ['description'],
+                              category: filteredProducts[index]['category'],
+                              productId: filteredProducts[index]['productid'],
+                              price: filteredProducts[index]['price'],
                             ),
                           );
                         },
@@ -188,11 +193,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 10),
                           child: ProductTile(
-                            title: snapshot.data![index]['title'],
-                            description: snapshot.data![index]['description'],
-                            price: snapshot.data![index]['price'],
-                            category: snapshot.data![index]['category'],
-                            productId: snapshot.data![index]['productid'],
+                            title: filteredProducts[index]['title'],
+                            description: filteredProducts[index]['description'],
+                            price: filteredProducts[index]['price'],
+                            category: filteredProducts[index]['category'],
+                            productId: filteredProducts[index]['productid'],
                           ),
                         ),
                       );
@@ -233,10 +238,9 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(
+          BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart), label: "Cart"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-        
         ],
       ),
     );
