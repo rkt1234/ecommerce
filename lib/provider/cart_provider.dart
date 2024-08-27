@@ -26,4 +26,11 @@ class CartProvider extends ChangeNotifier {
     showTotal = val;
     notifyListeners();
   }
+    void clearCart() {
+    cart.clear();
+    showTotal = false;
+    res = 0.0;
+    notifyListeners();
+  }
 }
+

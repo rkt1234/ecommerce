@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:ecommerce/models/review_model.dart';
 import 'package:ecommerce/utils/api_urls.dart';
 import 'package:ecommerce/utils/configs.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 Future<List<String>> getCategory() async {
   final response = await http.get(Uri.parse(fetchCategoriesUrl));
@@ -201,3 +201,35 @@ Future<String> deleteCartItem(int cartId, String token) async{
     return "Could not delete item";
   }
 }
+
+Future<String> placeOrder(String token, List<Map<String, dynamic>> items, List<int> cartIds) async{
+  print("tell me ");
+  print(cartIds);
+  final headers = {
+    'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json',
+  };
+      DateTime now = DateTime.now();
+      String createdTime =  DateFormat('M/d/yyyy h:mm a').format(now);
+     
+  final body = {
+    "items": items,
+    "customerId":customerId,
+    "date": createdTime,
+    "deliveryAddress": customerAddress,
+    "cartIds": cartIds
+  };
+
+  try {
+    final response = await http.post(Uri.parse(placeOrderUrl), headers: headers, body: jsonEncode(body));
+    print(jsonDecode(response.body)['message']);
+    return jsonDecode(response.body)['message'];
+  }
+  catch(e) {
+    print(e);
+    return "Could not place order";
+  }
+  
+}
+
+

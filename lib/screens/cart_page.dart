@@ -137,7 +137,7 @@ class _CartPageState extends State<CartPage> {
                                                   const Icon(Icons.check,
                                                       color: Colors.green),
                                                 );
-                                                  cartProvider.calculateTotal();
+                                                cartProvider.calculateTotal();
                                               } else {
                                                 getToast(
                                                   context,
@@ -168,7 +168,7 @@ class _CartPageState extends State<CartPage> {
                                                       ['quantity'],
                                                   widget.token,
                                                 );
-                                                  cartProvider.calculateTotal();
+                                                cartProvider.calculateTotal();
                                               }
                                             },
                                             icon: const Icon(
@@ -233,23 +233,42 @@ class _CartPageState extends State<CartPage> {
                 },
               ),
             ),
-            cartProvider.showTotal
-                ? Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            push(context,  OrderPage(cartItems: cartProvider.cart,total: cartProvider.res,));
-
-                          },
-                          child: const Text('Proceed to buy cart items'),
-                        ),
-                      ],
-                    ),
-                  )
-                : Container(),
+            FutureBuilder<List<Map<String, dynamic>>>(
+              future: _futureCart,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Return an empty container or some placeholder widget while loading
+                  return Container();
+                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  return cartProvider.showTotal
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  push(
+                                    context,
+                                    OrderPage(
+                                      cartItems: cartProvider.cart,
+                                      total: cartProvider.res, 
+                                      token: widget.token,
+                                      // Example address
+                                    ),
+                                  );
+                                },
+                                child: const Text('Proceed to buy cart items'),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container();
+                } else {
+                  return Container(); // Return an empty container if the cart is empty
+                }
+              },
+            ),
           ],
         );
       },

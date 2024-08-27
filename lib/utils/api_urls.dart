@@ -8,4 +8,5 @@ const addToCartUrl = "https://ecommercebackend-o1j1.onrender.com/product/add/car
 const fetchCartUrl = "https://ecommercebackend-o1j1.onrender.com/product/fetch/cart";
 const updateCartUrl = "https://ecommercebackend-o1j1.onrender.com/product/update/cart";
 const deleteCartUrl = "https://ecommercebackend-o1j1.onrender.com/product/delete/cart";
+const placeOrderUrl = "https://ecommercebackend-o1j1.onrender.com/product/place/order";
 
