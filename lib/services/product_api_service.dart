@@ -133,9 +133,8 @@ Future<String> addToCart(
     if (response.statusCode == 200) {
       // Return success message or handle response data as needed
       return 'Product added to cart successfully';
-    }
-    else if(response.statusCode == 409) {
-        return 'Product already added in cart';
+    } else if (response.statusCode == 409) {
+      return 'Product already added in cart';
     } else {
       // Handle other status codes if needed
       return 'Failed to add product to cart: ${response.statusCode}';
@@ -186,7 +185,7 @@ Future<void> updateCart(int cartId, int quantity, String token) async {
   } catch (e) {}
 }
 
-Future<String> deleteCartItem(int cartId, String token) async{
+Future<String> deleteCartItem(int cartId, String token) async {
   //
   final headers = {
     'Authorization': 'Bearer $token',
@@ -194,42 +193,74 @@ Future<String> deleteCartItem(int cartId, String token) async{
   };
   Map<String, int> body = {'cartId': cartId};
   try {
-    final response = await http.delete(Uri.parse(deleteCartUrl), headers: headers, body: jsonEncode(body));
+    final response = await http.delete(Uri.parse(deleteCartUrl),
+        headers: headers, body: jsonEncode(body));
     return jsonDecode(response.body)['message'];
-  }
-  catch (e) {
+  } catch (e) {
     return "Could not delete item";
   }
 }
 
-Future<String> placeOrder(String token, List<Map<String, dynamic>> items, List<int> cartIds) async{
+Future<String> placeOrder(
+    String token, List<Map<String, dynamic>> items, List<int> cartIds) async {
   print("tell me ");
+  print(items);
   print(cartIds);
   final headers = {
     'Authorization': 'Bearer $token',
     'Content-Type': 'application/json',
   };
-      DateTime now = DateTime.now();
-      String createdTime =  DateFormat('M/d/yyyy h:mm a').format(now);
-     
+  DateTime now = DateTime.now();
+  String createdTime = DateFormat('M/d/yyyy h:mm a').format(now);
+  // Add the `date` key to each map in `items`
+  // Example: "2024-08-26 15:30:00"
+for (int i = 0; i < items.length; i++) {
+    items[i]['date'] = createdTime;
+  }
+
+// Now each map in `items` will have a `date` key with the current date-time value
+  print(items);
+
   final body = {
     "items": items,
-    "customerId":customerId,
+    "customerId": customerId,
     "date": createdTime,
     "deliveryAddress": customerAddress,
     "cartIds": cartIds
   };
 
   try {
-    final response = await http.post(Uri.parse(placeOrderUrl), headers: headers, body: jsonEncode(body));
+    final response = await http.post(Uri.parse(placeOrderUrl),
+        headers: headers, body: jsonEncode(body));
     print(jsonDecode(response.body)['message']);
     return jsonDecode(response.body)['message'];
-  }
-  catch(e) {
+  } catch (e) {
     print(e);
     return "Could not place order";
   }
-  
 }
 
-
+Future<List<Map<String, dynamic>>> fetchOrder(String token) async {
+  final headers = {
+    'Authorization': 'Bearer $token',
+  };
+  try {
+    final response = await http.get(Uri.parse(fetchOrderUrl), headers: headers);
+    if (response.statusCode == 200) {
+      List<dynamic> decodedResponse = jsonDecode(response.body);
+  print(decodedResponse);
+      // Ensure the decoded response is a list of maps
+      return decodedResponse
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+    } else {
+      // Handle non-200 responses here, maybe log the error or notify the user
+      print('Failed to fetch orders: ${response.statusCode}');
+      throw Exception('Failed to fetch orders');
+    }
+  } catch (e) {
+    // Handle any exceptions such as network issues or JSON decoding errors
+    print('An error occurred: $e');
+    throw Exception('Failed to fetch orders');
+  }
+}

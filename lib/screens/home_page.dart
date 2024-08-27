@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce/screens/product_page.dart';
+import 'package:ecommerce/screens/profile_page.dart';
 import 'package:ecommerce/screens/signin.dart';
 import 'package:ecommerce/screens/cart_page.dart'; // Import the CartPage
 import 'package:ecommerce/services/navigation_service.dart';
@@ -40,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
       buildHomeScreen(),
 
       // ProfilePage(), // Replace with your ProfilePage widget
-      CartPage(token: widget.token) // CartPage widget
+      CartPage(token: widget.token), // CartPage widget
+      ProfilePage(token: widget.token,)
     ]);
   }
 
