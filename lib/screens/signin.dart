@@ -41,9 +41,13 @@ class _SigninScreenState extends State<SigninScreen> {
     return Consumer<SigninProvider>(
       builder: (context, provider, child) {
         return Scaffold(
+          resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Sign in'),
-        ),
+            title: const Text(
+              'Sign In',
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 30),
+            ),
+          ),
         body: Flexible(
           child: Stack(
             children: [
@@ -54,56 +58,113 @@ class _SigninScreenState extends State<SigninScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextField(
+                        cursorColor: Colors.grey,
                         controller: _emailController,
                         decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white,
+                                width:
+                                    2.0), // Red border when the TextField is enabled but not focused
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Optional: customize the border radius
+                          ),
                           errorText: provider.emailError,
                           labelText: 'Email',
-                          border: const OutlineInputBorder(),
+                          labelStyle: TextStyle(color: Colors.grey),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white,
+                                width:
+                                    2.0), // Red border when the TextField is focused
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Optional: customize the border radius
+                          ),
+                          // border: InputBorder.none
+                          border: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20.0),
                       TextField(
+                          cursorColor: Colors.grey,
                         controller: _passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white,
+                                width:
+                                    2.0), // Red border when the TextField is enabled but not focused
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Optional: customize the border radius
+                          ),
                           errorText: provider.passwordError,
                           labelText: 'Password',
-                          border: const OutlineInputBorder(),
+                          labelStyle: TextStyle(color: Colors.grey),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.white,
+                                width:
+                                    2.0), // Red border when the TextField is focused
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Optional: customize the border radius
+                          ),
+                          // border: InputBorder.none
+                          border: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20.0),
-                      ElevatedButton(
-                        onPressed: () async {
-                          bool navigate = await provider.checkValidity(
-                              _emailController.text, _passwordController.text);
-                          print(provider.toastMessage);
-                          getToast(
-                              context, provider.toastMessage, provider.icon);
-                          if (navigate) {
-                            await pref.setString('jwt_token', provider.jwt);
-                            print(provider.jwt);
-                            pushReplacement(
-                                context,
-                                HomeScreen(
-                                  token: provider.jwt,
-                                  // token: jwt,
-                                ));
-                          }
-                          // Implement your sign up logic here
-                        },
-                        child: const Text('Sign in'),
+                      Container(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            bool navigate = await provider.checkValidity(
+                                _emailController.text, _passwordController.text);
+                            print(provider.toastMessage);
+                            getToast(
+                                context, provider.toastMessage, provider.icon);
+                            if (navigate) {
+                              await pref.setString('jwt_token', provider.jwt);
+                              print(provider.jwt);
+                              pushReplacement(
+                                  context,
+                                  HomeScreen(
+                                    token: provider.jwt,
+                                    // token: jwt,
+                                  ));
+                            }
+                            // Implement your sign up logic here
+                          },
+                          child: const Text('CONTINUE'),
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Color.fromRGBO(
+                                  223, 48, 33, 1), // Text (foreground) color
+                            )
+                        ),
                       ),
                       const SizedBox(height: 20.0),
-                      GestureDetector(
-                        onTap: () {
-                          pushReplacement(context, SignupScreen());
-                        },
-                        child: const Text(
-                          'New user? Signup',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
+                      Container(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            pushReplacement(context, SignupScreen());
+                          },
+                          child: const Text('SIGNUP'),
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Color.fromRGBO(
+                                223, 48, 33, 1), // Text (foreground) color
                           ),
                         ),
                       ),

@@ -86,7 +86,7 @@ class _ProductTileState extends State<ProductTile> {
                   height: 8,
                 ),
                  Text(
-                  'Price: ${widget.price.toString()}',
+                  'Price: ₹ ${widget.price.toString()}',
                   maxLines: 1,
                   overflow: TextOverflow.fade,
                   style: TextStyle(
