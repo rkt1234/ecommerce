@@ -1,5 +1,5 @@
 import 'package:ecommerce/provider/signup_provider.dart';
-import 'package:ecommerce/screens/home_page.dart';
+import 'package:ecommerce/screens/landing_screen.dart';
 import 'package:ecommerce/screens/signin.dart';
 import 'package:ecommerce/services/navigation_service.dart';
 import 'package:ecommerce/services/toast_service.dart';
@@ -214,7 +214,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               print(provider.jwt);
                               pushReplacement(
                                   context,
-                                  HomeScreen(
+                                  LandingScreen(
                                     token: provider.jwt,
                                   ));
                             }

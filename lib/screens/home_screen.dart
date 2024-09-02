@@ -1,8 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecommerce/screens/product_page.dart';
-import 'package:ecommerce/screens/profile_page.dart';
-import 'package:ecommerce/screens/signin.dart';
-import 'package:ecommerce/screens/cart_page.dart'; // Import the CartPage
 import 'package:ecommerce/services/navigation_service.dart';
 import 'package:ecommerce/services/product_api_service.dart';
 import 'package:ecommerce/utils/configs.dart';
@@ -11,57 +8,47 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatefulWidget {
-  final String token;
-  const HomeScreen({super.key, required this.token});
+class HomePage extends StatefulWidget {
+  final token;
+  HomePage({super.key, this.token});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  late SharedPreferences pref;
+class _HomePageState extends State<HomePage> {
+    late SharedPreferences pref;
   late Future<List<String>> _categoryFuture;
-  late Future<List<Map<String, dynamic>>> _productsFuture;
   String selectedCategory = "all"; // Initial category
-  int _selectedIndex = 0;
-  final List<Widget> _pages = [];
 
   @override
   void initState() {
     super.initState();
     initSharedPreferences();
     _categoryFuture = getCategory(); // Initialize category future
-    _productsFuture =
-        getProducts(selectedCategory); // Initialize products future
     Map<String, dynamic> jwtDecoded = JwtDecoder.decode(widget.token);
     customerName = jwtDecoded['customerName'];
     customerId = jwtDecoded['sub'];
     customerAddress = jwtDecoded['address'];
     customerEmail = jwtDecoded['email'];
     print(widget.token);
-    _pages.addAll([
-      buildHomeScreen(),
-      CartPage(token: widget.token), // CartPage widget
-      ProfilePage(token: widget.token),
-    ]);
   }
 
   void initSharedPreferences() async {
     pref = await SharedPreferences.getInstance();
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   Future<List<Map<String, dynamic>>> _getProducts() {
     return getProducts(selectedCategory);
   }
 
-  Widget buildHomeScreen() {
+  void _onSelected(String category) {
+    setState(() {
+      selectedCategory = category;
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -129,11 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             label: Text(snapshot.data![index]),
                             selected: selectedCategory == snapshot.data![index],
                             onSelected: (selected) {
-                              setState(() {
-                                selectedCategory = snapshot.data![index];
-                                _productsFuture =
-                                    _getProducts(); // Update products future
-                              });
+                              _onSelected(snapshot.data![index]);
                             },
                           ),
                         );
@@ -161,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: _productsFuture,
+              future: _getProducts(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   var filteredProducts = snapshot.data!
@@ -213,36 +196,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () async {
-                await pref.remove('jwt_token');
-                pushReplacement(context, const SigninScreen());
-              },
-              icon: const Icon(Icons.logout))
-        ],
-        title: const Text("Shopnow"),
-        backgroundColor: Colors.orangeAccent,
-      ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        elevation: 0,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart), label: "Cart"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-        ],
-      ),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:ecommerce/provider/signin_provider.dart';
-import 'package:ecommerce/screens/home_page.dart';
+import 'package:ecommerce/screens/landing_screen.dart';
 import 'package:ecommerce/screens/signup.dart';
 import 'package:ecommerce/services/navigation_service.dart';
 import 'package:ecommerce/services/toast_service.dart';
@@ -64,7 +64,7 @@ class _SigninScreenState extends State<SigninScreen> {
                           fillColor: Colors.white,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Colors.white,
                                 width:
                                     2.0), // Red border when the TextField is enabled but not focused
@@ -73,9 +73,9 @@ class _SigninScreenState extends State<SigninScreen> {
                           ),
                           errorText: provider.emailError,
                           labelText: 'Email',
-                          labelStyle: TextStyle(color: Colors.grey),
+                          labelStyle: const TextStyle(color: Colors.grey),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Colors.white,
                                 width:
                                     2.0), // Red border when the TextField is focused
@@ -98,7 +98,7 @@ class _SigninScreenState extends State<SigninScreen> {
                           fillColor: Colors.white,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Colors.white,
                                 width:
                                     2.0), // Red border when the TextField is enabled but not focused
@@ -107,9 +107,9 @@ class _SigninScreenState extends State<SigninScreen> {
                           ),
                           errorText: provider.passwordError,
                           labelText: 'Password',
-                          labelStyle: TextStyle(color: Colors.grey),
+                          labelStyle: const TextStyle(color: Colors.grey),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Colors.white,
                                 width:
                                     2.0), // Red border when the TextField is focused
@@ -124,7 +124,7 @@ class _SigninScreenState extends State<SigninScreen> {
                         ),
                       ),
                       const SizedBox(height: 20.0),
-                      Container(
+                      SizedBox(
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () async {
@@ -138,39 +138,39 @@ class _SigninScreenState extends State<SigninScreen> {
                               print(provider.jwt);
                               pushReplacement(
                                   context,
-                                  HomeScreen(
+                                  LandingScreen(
                                     token: provider.jwt,
                                     // token: jwt,
                                   ));
                             }
                             // Implement your sign up logic here
                           },
-                          child: const Text('CONTINUE'),
                           style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
-                              backgroundColor: Color.fromRGBO(
+                              backgroundColor: const Color.fromRGBO(
                                   223, 48, 33, 1), // Text (foreground) color
-                            )
+                            ),
+                          child: const Text('CONTINUE')
                         ),
                       ),
                       const SizedBox(height: 20.0),
-                      Container(
+                      SizedBox(
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () async {
-                            pushReplacement(context, SignupScreen());
+                            pushReplacement(context, const SignupScreen());
                           },
-                          child: const Text('SIGNUP'),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: Color.fromRGBO(
+                            backgroundColor: const Color.fromRGBO(
                                 223, 48, 33, 1), // Text (foreground) color
                           ),
+                          child: const Text('SIGNUP'),
                         ),
                       ),
                     ],
                   )),
-                  provider.isLoading?Center(child: CircularProgressIndicator(),):Container()
+                  provider.isLoading?const Center(child: CircularProgressIndicator(),):Container()
             ],
           )
         )
