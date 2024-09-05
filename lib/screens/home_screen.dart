@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   final token;
-  HomePage({super.key, this.token});
+  const HomePage({super.key, this.token});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -73,14 +73,14 @@ class _HomePageState extends State<HomePage> {
           items: [
             Image.network(
               height: 200,
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvS7Bc0GHMNYqESMoWRv--SG95YQgpRSpicQ&s",
-              fit: BoxFit.cover,
+              "https://m.media-amazon.com/images/I/61bK6PMOC3L._AC_UF1000,1000_QL80_.jpg",
+              fit: BoxFit.contain,
               width: double.infinity,
             ),
             Image.network(
               height: 200,
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvS7Bc0GHMNYqESMoWRv--SG95YQgpRSpicQ&s",
-              fit: BoxFit.cover,
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqv578X-YrItIsYUTgP2GiuOufUAztUfI58w&s",
+              fit: BoxFit.contain,
               width: double.infinity,
             ),
           ],
@@ -169,6 +169,7 @@ class _HomePageState extends State<HomePage> {
                               category: filteredProducts[index]['category'],
                               productId: filteredProducts[index]['productid'],
                               price: filteredProducts[index]['price'],
+                              imageUrl: filteredProducts[index]['imageurl'],
                             ),
                           );
                         },
@@ -181,6 +182,7 @@ class _HomePageState extends State<HomePage> {
                             price: filteredProducts[index]['price'],
                             category: filteredProducts[index]['category'],
                             productId: filteredProducts[index]['productid'],
+                            imageUrl: filteredProducts[index]['imageurl'],
                           ),
                         ),
                       );

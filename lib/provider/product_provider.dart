@@ -7,8 +7,9 @@ class ProductProvider extends ChangeNotifier {
   Future<String?> checkValidity(String token, String review, int productId) async{
     reviewError = review == "" ? "Please enter a review" : null;
     notifyListeners();
-    if(reviewError==null) 
-    return productService( token, review,  productId);
+    if(reviewError==null) {
+      return productService( token, review,  productId);
+    }
     return null;
   }
 

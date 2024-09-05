@@ -4,9 +4,7 @@ class ReviewModel {
   final int customerId;
   final String customerName;
 
-  ReviewModel(this.review, this.productId, this.customerId, this.customerName) {
-
-  }
+  ReviewModel(this.review, this.productId, this.customerId, this.customerName);
 
    Map<String, dynamic> toJson() {
     Map<String, dynamic> userObject = {

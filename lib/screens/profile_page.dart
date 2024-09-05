@@ -98,8 +98,7 @@ class ProfilePage extends StatelessWidget {
                                     height: 100,
                                     width: 100,
                                     fit: BoxFit.cover,
-                                    imageUrl: order['imageUrl'] ??
-                                        "https://w0.peakpx.com/wallpaper/908/670/HD-wallpaper-dhoni-sports-uniform-cricket-ms-dhoni-mahendra-singh-dhoni-thumbnail.jpg",
+                                    imageUrl: order['imageurl'],
                                   ),
                                 ),
                                 const SizedBox(width: 16),
@@ -128,7 +127,7 @@ class ProfilePage extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        'Price: \$${price.toStringAsFixed(2)}',
+                                        'Price: \₹ ${price.toStringAsFixed(2)}',
                                         maxLines: 1,
                                         overflow: TextOverflow.fade,
                                         style: const TextStyle(
@@ -137,7 +136,7 @@ class ProfilePage extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        'Total: \$${totalPrice.toStringAsFixed(2)}',
+                                        'Date : '+ order['date'],
                                         maxLines: 1,
                                         overflow: TextOverflow.fade,
                                         style: const TextStyle(

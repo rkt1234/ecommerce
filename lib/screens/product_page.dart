@@ -14,6 +14,7 @@ class ProductPage extends StatefulWidget {
   final dynamic price;
   final int productId;
   final String token;
+  final String imageUrl;
   const ProductPage(
       {super.key,
       required this.token,
@@ -21,7 +22,7 @@ class ProductPage extends StatefulWidget {
       required this.description,
       required this.category,
       this.price,
-      required this.productId});
+      required this.productId, required this.imageUrl});
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -83,9 +84,9 @@ class _ProductPageState extends State<ProductPage> {
                         child: CachedNetworkImage(
                           height: 250,
                           width: double.infinity,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           imageUrl:
-                              "https://w0.peakpx.com/wallpaper/908/670/HD-wallpaper-dhoni-sports-uniform-cricket-ms-dhoni-mahendra-singh-dhoni-thumbnail.jpg",
+                              widget.imageUrl,
                           errorWidget: (context, url, error) =>
                               const Icon(Icons.error),
                         ),
@@ -109,7 +110,7 @@ class _ProductPageState extends State<ProductPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Cost: ${widget.price}",
+                      "Cost: ₹ ${widget.price}",
                       style: const TextStyle(
                           fontSize: 20,
                           color: Colors.green,

@@ -22,12 +22,17 @@ class _LandingScreenState extends State<LandingScreen> {
   @override
   void initState() {
     super.initState();
+    initSharedPreferences();
     print(widget.token);
     _pages.addAll([
       HomePage(token: widget.token),
       CartPage(token: widget.token), // CartPage widget
       ProfilePage(token: widget.token),
     ]);
+  }
+
+    void initSharedPreferences() async {
+    pref = await SharedPreferences.getInstance();
   }
 
   void _onItemTapped(int index) {

@@ -8,7 +8,7 @@ class CartTile extends StatefulWidget {
   final dynamic price;
   final int productId;
    CartTile(
-      {
+      {super.key, 
       required this.title,
       required this.qty,
       required this.category,
@@ -75,7 +75,7 @@ class _CartTileState extends State<CartTile> {
                   widget.qty,
                   maxLines: 1,
                   overflow: TextOverflow.fade,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.grey,
                   ),
                 ),
@@ -86,7 +86,7 @@ class _CartTileState extends State<CartTile> {
                   'Qty: ${widget.category.toString()}',
                   maxLines: 1,
                   overflow: TextOverflow.fade,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.grey,
                   ),
                 ),
@@ -97,7 +97,7 @@ class _CartTileState extends State<CartTile> {
                   'Price: ${widget.price.toString()}',
                   maxLines: 1,
                   overflow: TextOverflow.fade,
-                  style: TextStyle(
+                  style: const TextStyle(
                     // color: Colors.green,
                     fontWeight: FontWeight.bold,
                   ),

@@ -87,9 +87,9 @@ class _CartPageState extends State<CartPage> {
                                   child: CachedNetworkImage(
                                     height: double.infinity,
                                     width: 160,
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                     imageUrl:
-                                        "https://w0.peakpx.com/wallpaper/908/670/HD-wallpaper-dhoni-sports-uniform-cricket-ms-dhoni-mahendra-singh-dhoni-thumbnail.jpg",
+                                        cartProvider.cart[index]['imageurl'],
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -205,14 +205,12 @@ class _CartPageState extends State<CartPage> {
                                         ],
                                       ),
                                       const SizedBox(height: 8),
-                                      Text(
-                                        (double.parse(cartProvider.cart[index]
+                                      Text("₹ ${double.parse(cartProvider.cart[index]
                                                         ['price']
                                                     .toString()) *
                                                 double.parse(cartProvider
                                                     .cart[index]['quantity']
-                                                    .toString()))
-                                            .toString(),
+                                                    .toString())}",
                                         maxLines: 1,
                                         overflow: TextOverflow.fade,
                                         style: const TextStyle(

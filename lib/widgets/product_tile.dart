@@ -7,7 +7,8 @@ class ProductTile extends StatefulWidget {
   final String category;
   final dynamic price;
   final int productId;
-  const ProductTile({super.key, required this.title, required this.description, required this.category, required this.price, required this.productId});
+  final String imageUrl;
+  const ProductTile({super.key, required this.title, required this.description, required this.category, required this.price, required this.productId, required this.imageUrl});
 
   @override
   State<ProductTile> createState() => _ProductTileState();
@@ -39,9 +40,9 @@ class _ProductTileState extends State<ProductTile> {
             child: CachedNetworkImage(
               height: 100,
               width: 150,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               imageUrl:
-                  "https://w0.peakpx.com/wallpaper/908/670/HD-wallpaper-dhoni-sports-uniform-cricket-ms-dhoni-mahendra-singh-dhoni-thumbnail.jpg",
+                  widget.imageUrl,
             ),
           ),
           const SizedBox(
@@ -67,7 +68,7 @@ class _ProductTileState extends State<ProductTile> {
                   widget.description,
                   maxLines: 1,
                   overflow: TextOverflow.fade,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.grey,
                   ),
                 ),
@@ -78,7 +79,7 @@ class _ProductTileState extends State<ProductTile> {
                   'Cat: ${widget.category.toString()}',
                   maxLines: 1,
                   overflow: TextOverflow.fade,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.grey,
                   ),
                 ),
@@ -89,7 +90,7 @@ class _ProductTileState extends State<ProductTile> {
                   'Price: ₹ ${widget.price.toString()}',
                   maxLines: 1,
                   overflow: TextOverflow.fade,
-                  style: TextStyle(
+                  style: const TextStyle(
                     // color: Colors.green,
                     fontWeight: FontWeight.bold,
                   ),
